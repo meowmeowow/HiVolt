@@ -1,11 +1,14 @@
-package HiVolt2;
 
-public class Fence {
-	int x;
-	int y;
-	public Fence(int x, int y)
-	{
-		this.x =x;
-		this.y =y;
+public class Fence extends Cell{
+
+	public Fence(int x, int y) {
+		super(x, y);
+		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String draw() {
+		//draws itself
+		return("⚡");
+	}
+
 }
