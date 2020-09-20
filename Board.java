@@ -1,194 +1,107 @@
-package HiVolt2;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import java.awt.*;
-public class Board extends JFrame implements KeyListener{
-	Random r= new Random();
-	JFrame f = new JFrame();
-	Mho Mhos[];
-	Player p1;
-	Fence fence[];
-	JLabel l;
-	int arr[][] = new int[12][12];
-	public JButton arr2[][];
-	boolean gameover = false;
-	public Board()
-	{
-		arr2 = new JButton[12][12];
-		f.setSize(800, 800);
-		f.setLayout(new GridLayout(12,12));
-		f.setResizable(false);
-		f.setTitle("Moves: 0");
-		for (int i =0;i<12; i++)
-		{
-			for (int ii =0; ii <12; ii++)
-			{
-				arr2[i][ii] = new JButton();
-				//arr2[i][ii].setBackground(new Color(0,0,0));
-				arr2[i][ii].setBorderPainted(true);
-				arr2[i][ii].setOpaque(true);
-				f.add(arr2[i][ii]);
+import java.util.Random;
+import java.util.ArrayList;
+public class Board {
+	
+	Player player = null;
+	public Cell[][] gameBoard;
+	Random rand;
+	
+	public int width;
+	public int height;
+	
+	public Board(int width, int height){
+		this.width = width;
+		this.height = height;
+		this.rand = new Random(); 
+		//initate board with width and height with Cells
+		//assign Cells to be Fence Enemy or Player 
+		
+		this.gameBoard =  new Cell[width][height];
+
+		
+		//set walls on the edges
+		assert(width == height);
+		for(int i = 0; i < height; i++){ //hypoceticlly add another for loop for width too 
+			//this currently makes a double instance 
+			set(i,0,new Fence(i,0));
+			set(i,height-1, new Fence(i,height-1));
+			
+			gameBoard[0][i] = new Fence(0,i);
+			gameBoard[width-1][i] = new Fence(width-1,i);
+		}
+		//set player
+		// random => int random_int = (int)(Math.random() * (max - min + 1) + min);
+		int playerx = (int)(Math.random() * (width-2) + 1);
+		int playery = (int)(Math.random() * (height-2) + 1);
+		
+		this.player = new Player(playerx,playery);
+		set(playerx, playery, this.player); 
+		
+		
+		//set fences
+		for (int i = 0; i < 20; i++){
+			while(true) {
+				int fencex = (int)(Math.random() * (width-2) + 1);
+				int fencey = (int)(Math.random() * (height-2) + 1);
+				
+				if(get(fencex,fencey) == null) {
+					set(fencex, fencey, new Fence(fencex,fencey));
+					break;
+				}
 			}
 		}
-		Mhos = new Mho[12];
-		fence = new Fence[20];
-		for (int i =0; i < 20; i++)
-		{
-			int x = r.nextInt(10);
-			int y = r.nextInt(10);
-			if (arr[y+1][x+1] != 0)
-			{
-				i--;
-				continue;
+		
+		
+		//set enemies
+		for (int i = 0; i < 12; i++){
+			while(true) {
+				int enemyx = (int)(Math.random() * (width - 2 + 1) + 1);
+				int enemyy = (int)(Math.random() * (height - 2 + 1) + 1);
+				
+				if(gameBoard[enemyx][enemyy] == null) {
+					gameBoard[enemyx][enemyy] = new Enemy(enemyx,enemyy);
+					break;
+				}
 			}
-			else
-			{
-				arr[y+1][x+1] = 1;
-				fence[i] = new Fence(x,y);
-				ImageIcon imageIcon = new ImageIcon("D:/Fence.jpg");
-				Image image = imageIcon.getImage();
-				Image image2 = image.getScaledInstance(59, 59,  java.awt.Image.SCALE_SMOOTH);
-				arr2[y+1][x+1].setIcon(new ImageIcon(image2));
-			}
-		}
-		for (int i = 0; i < 12; i++)
-		{
-			arr[0][i] = 1;
-			arr[i][0] = 1;
-			arr[11][i] = 1;
-			arr[i][11] = 1;
-			ImageIcon imageIcon = new ImageIcon("D:/Fence.jpg");
-			Image image = imageIcon.getImage();
-			Image image2 = image.getScaledInstance(59, 59,  java.awt.Image.SCALE_SMOOTH);
-			arr2[0][i].setIcon(new ImageIcon(image2));
-			arr2[i][0].setIcon(new ImageIcon(image2));
-			arr2[11][i].setIcon(new ImageIcon(image2));
-			arr2[i][11].setIcon(new ImageIcon(image2));
 			
 		}
-		for (int i =0; i < 12; i++)
-		{
-			int x = r.nextInt(10);
-			int y = r.nextInt(10);
-			if (arr[y+1][x+1] != 0)
-			{
-				i--;
-				continue;
-			}
-			else
-			{
-				arr[y+1][x+1] = 2;
-				Mhos[i] = new Mho(x,y);
-				ImageIcon imageIcon2 = new ImageIcon("D:/Mho.png");
-				Image image23 = imageIcon2.getImage();
-				Image image22 = image23.getScaledInstance(66, 66,  java.awt.Image.SCALE_SMOOTH);
-				arr2[y+1][x+1].setIcon(new ImageIcon(image22));
-			}
-		}
-		for (int i =0; i < 1; i++)
-		{
-			int x = r.nextInt(10);
-			int y = r.nextInt(10);
-			if (arr[y+1][x+1] != 0)
-			{
-				i--;
-				continue;
-			}
-			else
-			{
-				p1= new Player(x,y);
-				ImageIcon imageIcon = new ImageIcon("D:/Player.jpg");
-				Image image = imageIcon.getImage();
-				Image image2 = image.getScaledInstance(59, 59,  java.awt.Image.SCALE_SMOOTH);
-				arr2[y+1][x+1].setIcon(new ImageIcon(image2));
-			}
-		}
-		f.setVisible(true);
 	}
-	public boolean check(int x, int y, int value)
-	{
-		return arr[y+1][x+1] == value;
-	}
-	public boolean deadP(int x, int y)
-	{
-		if (arr[y][x] == 0)
-			return false;
-		return true;
-	}
-	public boolean deadM(int x, int y)
-	{
-		if (arr[y][x] == 0)
-			return false;
-		return true;
-	}
-	public void process(char keyPressed)
-	{
-		arr2[p1.y+1][p1.x+1].setIcon(new ImageIcon());
-		p1.move(keyPressed);
-		if (deadP(p1.x+1,p1.y+1))
-		{
-			//gameover();
-			System.out.println("UR");
-			return;
-		}
-		f.setTitle("Moves: " + p1.moves);
-		ImageIcon imageIcon = new ImageIcon("D:/Player.jpg");
-		Image image = imageIcon.getImage();
-		Image image2 = image.getScaledInstance(59, 59,  java.awt.Image.SCALE_SMOOTH);
-		arr2[p1.y+1][p1.x+1].setIcon(new ImageIcon(image2));
-		f.setVisible(true);
-		boolean alldead = true;
-		for (int i =0; i < 12; i++)
-		{
-			if (Mhos[i].alive && keyPressed != 'J')
-			{
-				alldead= false;
-				arr[Mhos[i].y+1][Mhos[i].x+1] = 0;
-				arr2[Mhos[i].y+1][Mhos[i].x+1].setIcon(new ImageIcon());
-				Mhos[i].moves(p1.x, p1.y, arr);
-				if (deadM(Mhos[i].x+1,Mhos[i].y+1))
-				{
-					Mhos[i].alive = false;
-					continue;
+	public ArrayList<Enemy> getEnemyList() {
+		ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
+		for (int i = 0; i < width; i++){
+			for (int j = 0; j < height; j++){
+				if (get(i,j) != null && get(i,j).getClass() == Enemy.class) {
+				    enemyList.add((Enemy) get(i,j));
+	
 				}
-				ImageIcon imageIcon2 = new ImageIcon("D:/Mho.png");
-				Image image23 = imageIcon2.getImage();
-				Image image22 = image23.getScaledInstance(66, 66,  java.awt.Image.SCALE_SMOOTH);
-				arr2[Mhos[i].y+1][Mhos[i].x+1].setIcon(new ImageIcon(image22));
-				arr[Mhos[i].y+1][Mhos[i].x+1] = 2;
 			}
 		}
-		if (alldead || p1.moves >= 12)
-		{
-			System.out.println(p1.moves);
-		}
-		f.setVisible(true);
-		if (deadP(p1.x+1,p1.y+1))
-		{
-			System.out.println("DEAD");
-			//gameover();
-			return;
-		}
+		return(enemyList);
 	}
-	public void gameover()
-	{
-		gameover= true;
-	    add(l,BorderLayout.CENTER);
-	    ImageIcon img = new ImageIcon("gameover.jpg");
-	    l.setIcon(img);
+	
+	public void turn() {
+		//loop through the board: call move method on every cell with "phase"
+		ArrayList<Enemy> enemyList = getEnemyList();
+	    for (int i = 0; i < enemyList.size(); i++) {
+	        enemyList.get(i).move(this);
+	        
+	      }
 	}
-	@Override
-	public void keyPressed(KeyEvent e) {
-		char key = e.getKeyChar();
+	
+	public void set(int x,int y, Cell value) {
+		//set value of xy to Cell"value"
+		gameBoard[x][y] = value;
 	}
-	@Override
-	public void keyTyped(KeyEvent e) {
-		String str = "";
-		str += e.getKeyChar();
-		str.toUpperCase();
-		process(str.charAt(0));
+	
+	public Cell get(int x,int y) {
+		// returns value of cell
+		return gameBoard[x][y];
 	}
-	@Override
-	public void keyReleased(KeyEvent e) {}
+	
+	public Player getPlayer() {
+		return this.player;
+	}
+	
+	 
 }
+
