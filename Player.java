@@ -1,58 +1,52 @@
-package HiVolt2;
-import java.util.*;
-public class Player {
-	Random r = new Random();
-	int x;
-	int y;
-	int moves = 0;
-	public Player(int x, int y)
-	{
-		this.x =x;
-		this.y=y;
+import java.util.Scanner;
+public class Player extends Cell{
+	public boolean alive;
+	public Player(int x, int y) {
+		super(x, y);
+		// TODO Auto-generated constructor stub
 	}
-	public void move(char keypressed)
-	{
-		moves ++;
-		switch(keypressed)
-		{
-			case 'Q':
-				x--;
-				y--;
-				break;
-			case 'W':
-				y--;
-				break;
-			case 'E':
-				y--;
-				x++;
-				break;
-			case 'A':
-				x--;
-				break;
-			case 'S':
-				// No change
-				break;
-			case 'D':
-				x++;
-				break;
-			case 'Z':
-				y++;
-				x--;
-				break;
-			case 'X':
-				y++;
-				break;
-			case 'C':
-				y++;
-				x++;
-				break;
-			case 'J':
-				x = r.nextInt(10);
-				y= r.nextInt(10);
-				break;
-			default:
-				moves --;
-				break;	
-		}	
-	}	
+	@Override
+	public String draw() {
+		//draws itself
+		return("■");
+	}
+	public boolean movePlayer(Board b) { 
+			//get input from keyboard
+			//does the logic for moving
+			boolean moveRobots = true;
+			Scanner myObj = new Scanner(System.in); // change this 
+			
+			System.out.print("Enter Character: ");
+			String input = myObj.nextLine();
+			char keypressed = input.charAt(0);
+			
+			
+			
+			b.set(x,y,null);
+			
+			if (keypressed == 'q' || keypressed == 'w' || keypressed == 'e') y--;
+			if (keypressed == 'z' || keypressed == 'x' || keypressed == 'c') y++;
+			if (keypressed == 'q' || keypressed == 'a' || keypressed == 'z') x--;
+			if (keypressed == 'e' || keypressed == 'd' || keypressed == 'c') x++;
+			//if (keypressed == 'S')  stays the same;
+			if (keypressed == 'j') {
+				 x = (int)(Math.random() * (b.width - 2 + 1) + 1);
+				 y = (int)(Math.random() * (b.height - 2 + 1) + 1);		
+				 moveRobots = false;
+				
+			}
+			
+			//check if die from movement;
+
+			if(b.get(x,y) != null && (b.get(x,y).getClass() == Enemy.class || b.get(x,y).getClass() == Fence.class)) {
+				b.player = null;
+			}
+			else {
+				b.set(x,y,this);
+			}
+			return(moveRobots);
+			
+		 
+	}
+
 }
