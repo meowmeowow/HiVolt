@@ -8,10 +8,15 @@ public class Board {
 	
 	public int width;
 	public int height;
+	public int totalInnerFences;
+	public int totalEnemies;
 	
 	public Board(int width, int height){
 		this.width = width;
 		this.height = height;
+		
+		this.totalInnerFences = 20;
+		this.totalEnemies = 12;
 		this.rand = new Random(); 
 		//initate board with width and height with Cells
 		//assign Cells to be Fence Enemy or Player 
@@ -39,7 +44,7 @@ public class Board {
 		
 		
 		//set fences
-		for (int i = 0; i < 20; i++){
+		for (int i = 0; i < totalInnerFences; i++){
 			while(true) {
 				int fencex = (int)(Math.random() * (width-2) + 1);
 				int fencey = (int)(Math.random() * (height-2) + 1);
@@ -53,7 +58,7 @@ public class Board {
 		
 		
 		//set enemies
-		for (int i = 0; i < 12; i++){
+		for (int i = 0; i < totalEnemies; i++){
 			while(true) {
 				int enemyx = (int)(Math.random() * (width - 2 + 1) + 1);
 				int enemyy = (int)(Math.random() * (height - 2 + 1) + 1);
