@@ -1,25 +1,26 @@
-import java.util.Scanner;
 public class Player extends Cell{
 	public boolean alive;
 	public Player(int x, int y) {
 		super(x, y);
 		// TODO Auto-generated constructor stub
+
+
 	}
 	@Override
 	public String draw() {
 		//draws itself
-		return("■");
+		return("😃");
 	}
-	public boolean movePlayer(Board b) { 
+	public boolean movePlayer(Board b, char keypressed) { 
 			//get input from keyboard
 			//does the logic for moving
 			boolean moveRobots = true;
-			Scanner myObj = new Scanner(System.in); // change this 
+			//Scanner myObj = new Scanner(System.in); // change this 
 			
-			System.out.print("Enter Character: ");
-			String input = myObj.nextLine();
-			char keypressed = input.charAt(0);
-			
+//			System.out.print("Enter Character: ");
+//			String input = myObj.nextLine();
+//			char keypressed = input.charAt(0);
+//			
 			
 			
 			b.set(x,y,null);
